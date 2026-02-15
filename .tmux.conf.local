@@ -384,15 +384,15 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # this is the place to override or undo settings
 
 # increase history size
-#set -g history-limit 10000
+set -g history-limit 10000
 
 # start with mouse mode enabled
-#set -g mouse on
+set -g mouse on
 
 # force Vi mode
 #   really you should export VISUAL or EDITOR environment variable, see manual
-#set -g status-keys vi
-#set -g mode-keys vi
+set -g status-keys vi
+set -g mode-keys vi
 
 # replace C-b by C-a instead of using both prefixes
 # set -gu prefix2
@@ -410,6 +410,41 @@ bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse" \; display 'mouse #{?
 # move status line to top
 #set -g status-position top
 
+# -- tmux 3.5+ features --------------------------------------------------------
+
+# Set lower escape-time (default in tmux 3.5+)
+set -s escape-time 10
+
+# Add prefix timeout option
+set -g prefix-timeout 500
+
+# Enable extended keys support
+set -g extended-keys on
+set -g extended-keys-format 2
+
+# Add mirrored layout bindings
+bind M-v select-layout main-vertical-mirrored  # main pane on right
+bind M-h select-layout main-horizontal-mirrored  # main pane on bottom
+
+# Enable hyperlink support
+set -g allow-passthrough on
+
+# Add command error hook
+set-hook -g command-error 'display-message "Command failed: #{hook_command}"'
+
+# Control applications modifying pane title
+set -g allow-set-title on
+
+# Add search count to status line
+set -g status-right '#{?search_count,#[fg=colour3]#{search_count}#[default] ,}#{prefix}#{mouse}#{pairing}#{synchronized}#{?battery_status,#{battery_status},}#{?battery_bar, #{battery_bar},}#{?battery_percentage, #{battery_percentage},} , %R , %d %b | #{username}#{root} | #{hostname} '
+
+# Set popup window styles
+set -g popup-border-lines rounded
+set -g popup-border-style 'fg=colour4,bg=colour0'
+set -g popup-style 'fg=colour7,bg=colour0'
+
+# Add underscore color support
+set -g pane-active-border-style 'fg=colour4,bg=default,us=colour9'
 
 # -- tpm -----------------------------------------------------------------------
 
@@ -449,9 +484,12 @@ tmux_conf_uninstall_plugins_on_reload=true
 # visit https://github.com/tmux-plugins for available plugins
 #set -g @plugin 'tmux-plugins/tmux-copycat'
 #set -g @plugin 'tmux-plugins/tmux-cpu'
-#set -g @plugin 'tmux-plugins/tmux-resurrect'
-#set -g @plugin 'tmux-plugins/tmux-continuum'
-#set -g @continuum-restore 'on'
+
+# Recommended plugins
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @continuum-restore 'on'
+set -g @plugin 'tmux-plugins/tmux-yank'
 
 
 # -- custom variables ----------------------------------------------------------
@@ -463,8 +501,6 @@ tmux_conf_uninstall_plugins_on_reload=true
 #
 # then, use #{foo} in e.g. the 'tmux_conf_theme_status_left' or the
 # 'tmux_conf_theme_status_right' variables.
-
-# ------------------------------------------------------------------------------
 
 # # /!\ do not remove the following line
 # EOF
@@ -506,4 +542,3 @@ tmux_conf_uninstall_plugins_on_reload=true
 #
 # "$@"
 # # /!\ do not remove the previous line
-# #     do not write below this line
